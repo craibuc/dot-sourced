@@ -23,7 +23,7 @@ function ConvertTo-PlainText {
 
 	[CmdletBinding()]
 	param(
-		[Parameter(Position = 0, Mandatory = $true)]
+		[Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
 		[SecureString]$SecureString
 	)
 
