@@ -2,11 +2,11 @@
 .SYNOPSIS
 Query the Active Directory service by account, first name, or last name.
 
-.PARAMETER account
+.PARAMETER Account
 
-.PARAMETER account
+.PARAMETER FirstName
 
-.PARAMETER account
+.PARAMETER LastName
 
 .EXAMPLE
 Query by account:
@@ -70,18 +70,20 @@ function Get-ADUser {
 	$filter = "(&(objectCategory=person)(objectClass=user)$( $f -Join ''))"
 	Write-Debug "Filter: $filter"
 
-    $results = ([ADSISearcher]$filter).FindAll()
+    ([ADSISearcher]$filter).FindAll() | % {
 
-    if ($results.properties) {
+        if ($_.properties) {
 
-        $properties=@{}
+            $properties=@{}
 
-        # convert ResultPropertyCollection to PsCustomObject
-        $results.Properties.GetEnumerator() | % { 
-            $properties[$_.Name]= if ($_.Value.Count -gt 1) { $_.Value.ForEach({$_}) -Join ","} else { $_.Value.Item(0) }
+            # convert ResultPropertyCollection to PsCustomObject
+            $_.Properties.GetEnumerator() | % { 
+                $properties[$_.Name]= if ($_.Value.Count -gt 1) { $_.Value.ForEach({$_}) -Join ","} else { $_.Value.Item(0) }
+            }
+
+            [PsCustomObject]$properties
+
         }
-
-        [PsCustomObject]$properties
 
     }
 
